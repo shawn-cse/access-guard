@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AccessGuard is a visual DFA-based smart-building access control simulator with exact sequence validation, live state tracking, and access logs.">
+  <meta name="author" content="shawn-cse">
+  <meta name="theme-color" content="#07110f">
+  <title>AccessGuard — DFA Access Control Simulator</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <a class="brand" href="#dashboard" aria-label="AccessGuard home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img"><path d="M12 2 4.5 5v6.1c0 4.7 3.2 8.9 7.5 10.9 4.3-2 7.5-6.2 7.5-10.9V5L12 2Zm0 3 4.5 1.8v4.3c0 3.3-1.9 6.4-4.5 8-2.6-1.6-4.5-4.7-4.5-8V6.8L12 5Z"/></svg>
+        </span>
+        <span class="brand-copy">
+          <strong>AccessGuard</strong>
+          <small>DFA Security Console</small>
+        </span>
+      </a>
+
+      <div class="system-status" aria-label="System status">
+        <span class="status-dot"></span>
+        <div>
+          <strong>System online</strong>
+          <small>All policies loaded</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="#dashboard" data-section="dashboard">
+          <span class="nav-icon">▦</span><span>Overview</span>
+        </a>
+        <a href="#workspace" data-section="workspace">
+          <span class="nav-icon">⌁</span><span>Access Lab</span>
+        </a>
+        <a href="#reports" data-section="reports">
+          <span class="nav-icon">≡</span><span>Audit Log</span>
+        </a>
+        <a href="#settings" data-section="settings">
+          <span class="nav-icon">⚙</span><span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="policy-card">
+        <span class="policy-label">POLICY ENGINE</span>
+        <strong>Exact-order DFA</strong>
+        <div class="policy-meter"><span></span></div>
+        <small>8 zones · 8 auth signals</small>
+      </div>
+
+      <div class="sidebar-footer">
+        <span>Built by <strong>shawn-cse</strong></span>
+        <a href="mailto:shawnazd@gmail.com">shawnazd@gmail.com</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu" id="menuBtn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+          <div>
+            <span class="top-label">Security Operations</span>
+            <h1>Access Control Console</h1>
+          </div>
+        </div>
+        <div class="top-actions">
+          <span class="live-badge"><span class="status-dot"></span> Live simulation</span>
+          <a class="btn btn-ghost btn-sm hide-mobile" href="https://github.com/shawn-cse" rel="noreferrer" target="_blank">GitHub ↗</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="hero" id="dashboard">
+          <div class="hero-content">
+            <div class="eyebrow"><span></span> Deterministic security policy simulator</div>
+            <h2>Authenticate with confidence.</h2>
+            <p>Choose a restricted zone, build an authentication sequence, and watch AccessGuard evaluate every signal against an exact DFA policy.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#workspace">Start simulation <span>→</span></a>
+              <a class="btn btn-ghost" href="#reports">View audit log</a>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="radar-ring ring-one"></div>
+            <div class="radar-ring ring-two"></div>
+            <div class="radar-ring ring-three"></div>
+            <div class="shield-core">
+              <svg viewBox="0 0 24 24"><path d="M12 2 4.5 5v6.1c0 4.7 3.2 8.9 7.5 10.9 4.3-2 7.5-6.2 7.5-10.9V5L12 2Zm3.5 8.1-4.2 4.2-2.4-2.4 1.4-1.4 1 1 2.8-2.8 1.4 1.4Z"/></svg>
+            </div>
+            <span class="signal signal-a">CARD</span>
+            <span class="signal signal-b">BIO</span>
+            <span class="signal signal-c">PIN</span>
+          </div>
+        </section>
+
+        <section class="section stats-section" aria-label="Simulation statistics">
+          <div class="grid stats">
+            <article class="card stat">
+              <div class="stat-top"><span class="stat-icon">▦</span><span class="trend">Policy set</span></div>
+              <strong id="zoneCount">8</strong>
+              <span class="label">Restricted zones</span>
+              <small>Configured access policies</small>
+            </article>
+            <article class="card stat">
+              <div class="stat-top"><span class="stat-icon">⌁</span><span class="trend">Available</span></div>
+              <strong id="methodCount">8</strong>
+              <span class="label">Authentication methods</span>
+              <small>Supported security signals</small>
+            </article>
+            <article class="card stat stat-success">
+              <div class="stat-top"><span class="stat-icon">✓</span><span class="trend">Session</span></div>
+              <strong id="grantedCount">0</strong>
+              <span class="label">Access granted</span>
+              <small>Successful verification attempts</small>
+            </article>
+            <article class="card stat stat-danger">
+              <div class="stat-top"><span class="stat-icon">×</span><span class="trend">Session</span></div>
+              <strong id="deniedCount">0</strong>
+              <span class="label">Access denied</span>
+              <small>Rejected verification attempts</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="workspace">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Access Lab</span>
+              <h2>Run a verification</h2>
+              <p>Build the exact signal sequence required by the selected zone.</p>
+            </div>
+            <span class="shortcut-hint hide-mobile">Keyboard: <kbd>1–8</kbd> signals · <kbd>Enter</kbd> verify</span>
+          </div>
+
+          <div class="workspace-grid">
+            <article class="card control-panel">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">01 / POLICY</span>
+                  <h3>Select restricted zone</h3>
+                </div>
+                <span class="security-chip">SECURE</span>
+              </div>
+
+              <div class="field">
+                <label for="zoneSelect">Restricted zone</label>
+                <div class="select-wrap">
+                  <select class="select" id="zoneSelect"></select>
+                  <span aria-hidden="true">⌄</span>
+                </div>
+              </div>
+
+              <div class="zone-summary" id="zoneInfo"></div>
+
+              <div class="sequence-header">
+                <div>
+                  <span class="card-kicker">REQUIRED PATH</span>
+                  <h4>Authentication sequence</h4>
+                </div>
+                <span class="sequence-count" id="sequenceCount">0 steps</span>
+              </div>
+              <div class="required-path" id="requiredSteps"></div>
+
+              <div class="dfa-panel">
+                <div class="dfa-head">
+                  <span class="card-kicker">LIVE DFA STATE</span>
+                  <span id="dfaStateLabel">q0 · Waiting</span>
+                </div>
+                <div class="dfa-track" id="dfaTrack"></div>
+              </div>
+            </article>
+
+            <article class="card authentication-panel">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">02 / AUTHENTICATE</span>
+                  <h3>Enter security signals</h3>
+                </div>
+                <button class="text-btn" id="undoAccess" type="button" disabled>Undo</button>
+              </div>
+
+              <div class="auth-method-grid" id="authButtons"></div>
+
+              <div class="input-sequence-box">
+                <div class="input-sequence-head">
+                  <div>
+                    <span class="card-kicker">INPUT BUFFER</span>
+                    <strong id="progressLabel">0 of 0 signals</strong>
+                  </div>
+                  <button class="text-btn" id="clearAccess" type="button">Clear all</button>
+                </div>
+                <div class="sequence-progress"><span id="sequenceProgress"></span></div>
+                <div class="entered-steps" id="enteredSteps">
+                  <div class="empty-state compact">No signals entered yet.</div>
+                </div>
+              </div>
+
+              <div class="verify-row">
+                <button class="btn btn-primary btn-large" id="verifyAccess" type="button">Verify access <span>→</span></button>
+                <div class="verify-status" id="accessResult" aria-live="polite">
+                  <span class="status-dot neutral"></span>
+                  <span>Ready for authentication</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="card legend-card">
+            <div class="card-head legend-head">
+              <div>
+                <span class="card-kicker">SIGNAL DIRECTORY</span>
+                <h3>Authentication method legend</h3>
+              </div>
+              <span class="muted-copy">Use keys 1–8 for faster input</span>
+            </div>
+            <div class="method-legend" id="methodLegend"></div>
+          </article>
+        </section>
+
+        <section class="section" id="reports">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Audit Trail</span>
+              <h2>Access activity</h2>
+              <p>Review verification attempts generated by this browser session.</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-ghost btn-sm" id="exportLogs" type="button">Export CSV</button>
+              <button class="btn btn-ghost btn-sm danger-text" id="clearLogs" type="button">Clear log</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-toolbar">
+              <div class="log-summary">
+                <span class="status-dot"></span>
+                <span id="logSummary">No verification attempts yet</span>
+              </div>
+              <span class="muted-copy" id="lastAttempt">Waiting for activity</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Zone</th>
+                    <th>Sequence</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="accessRows"></tbody>
+              </table>
+              <div class="table-empty" id="tableEmpty">
+                <div class="empty-icon">≡</div>
+                <strong>No audit events yet</strong>
+                <span>Verification attempts will appear here automatically.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="settings">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Preferences</span>
+              <h2>Simulation settings</h2>
+              <p>Control how AccessGuard stores and displays local simulation data.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <article class="card setting-card">
+              <div>
+                <span class="setting-icon">↻</span>
+                <div>
+                  <h3>Persist audit history</h3>
+                  <p>Keep access attempts after refreshing this browser.</p>
+                </div>
+              </div>
+              <label class="switch">
+                <input id="persistLogs" type="checkbox" checked>
+                <span class="switch-ui"></span>
+              </label>
+            </article>
+            <article class="card setting-card">
+              <div>
+                <span class="setting-icon">⌗</span>
+                <div>
+                  <h3>Compact interface</h3>
+                  <p>Reduce card spacing for smaller laptop screens.</p>
+                </div>
+              </div>
+              <label class="switch">
+                <input id="compactMode" type="checkbox">
+                <span class="switch-ui"></span>
+              </label>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <div>
+          <strong>AccessGuard</strong>
+          <span>DFA-based smart-building access control simulator.</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/shawn-cse" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:shawnazd@gmail.com">Email</a>
+          <span>© 2026</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
